@@ -1471,13 +1471,12 @@
         ctx.save();
         for (let p of this.lavaParticles) {
           const alpha = 1.0 - p.life / p.maxLife;
-          ctx.fillStyle = p.color;
-          ctx.shadowColor = p.color;
-          ctx.shadowBlur = 8;
-          ctx.globalAlpha = Math.max(0, alpha);
+          ctx.strokeStyle = p.color;
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = Math.max(0, alpha) * 0.75;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.arc(p.x, p.y, p.size * 1.5, 0, Math.PI * 2);
+          ctx.stroke();
         }
         ctx.restore();
       },
@@ -1752,7 +1751,7 @@
         } else if (currentLevel <= 6) {
           c2 = '#c084fc'; c3 = '#7e22ce';
         } else if (currentLevel <= 8) {
-          c2 = '#fbbf24'; c3 = '#d97706';
+          c2 = '#34d399'; c3 = '#059669'; // Green balls for better contrast in Lava levels
         } else {
           c2 = '#f87171'; c3 = '#b91c1c';
         }
@@ -2117,9 +2116,9 @@
       balls = [];
       const numBalls = level + 1;
       // ALT:
-// const speed = 130 + level * 14;
+      // const speed = 130 + level * 14;
 
-// NEU: Geschwindigkeit skaliert mit der Bildschirmbreite
+      // NEU: Geschwindigkeit skaliert mit der Bildschirmbreite
       const baseSpeed = 130 + level * 14;
       const speed = (baseSpeed / 900) * canvasW;
       const radius = Math.max(2, cellW * 0.38);
@@ -2364,7 +2363,7 @@
           tctx.fillRect(0, 0, tc.width, tc.height);
 
           // Sauber und gut sichtbar auf das Spielfeld zeichnen
-          gameCtx.globalAlpha = isBrightLevel ? 0.40 : 0.55; 
+          gameCtx.globalAlpha = isBrightLevel ? 0.40 : 0.55;
           gameCtx.shadowColor = th.accent || '#ffd700';
           gameCtx.shadowBlur = 25; // Etwas mehr Glow für den Kontrast
           gameCtx.drawImage(tc, dx, dy, targetW, targetH);
