@@ -485,8 +485,8 @@ const LANG = {
     title: 'JEZZBALL', subtitle: 'made by Versteckules',
     startButton: '▶ SPIEL STARTEN', rulesTitle: 'SPIELREGELN',
     rules: [
-      'Klicke aufs Spielfeld um eine Wand zu setzen',
-      'Richtung wechseln: Leertaste / Rechtsklick / Mausrad / Taste R',
+      'PC: Klick baut Wand. Rechtsklick (halten) / Leertaste wechselt Richtung',
+      'Handy: Wischen bestimmt Richtung, normales Tippen baut Wand',
       'Schließe ≥75% der Fläche ab',
       'Trifft ein Ball die wachsende Wand → Leben -1',
       'Pause: Taste P oder Pause-Knopf oben links',
@@ -505,8 +505,8 @@ const LANG = {
     title: 'JEZZBALL', subtitle: 'made by Versteckules',
     startButton: '▶ START GAME', rulesTitle: 'HOW TO PLAY',
     rules: [
-      'Click on the field to place a wall',
-      'Toggle direction: Space / Right-click / Mouse wheel / R key',
+      'PC: Click to place wall. Hold right-click or Space to toggle direction',
+      'Mobile: Swipe to set direction, normal tap to place wall',
       'Clear ≥75% of the total area',
       'A ball hitting a growing wall costs a life',
       'Pause: Press P or Pause button top-left',
@@ -525,8 +525,8 @@ const LANG = {
     title: 'JEZZBALL', subtitle: 'made by Versteckules',
     startButton: '▶ SPUSTIT HRU', rulesTitle: 'JAK HRÁT',
     rules: [
-      'Kliknutím na hrací pole postavíte zeď',
-      'Přepnout směr: Mezerník / Pravé tlačítko / Kolečko myši / Klávesa R',
+      'PC: Kliknutím postavíte zeď. Podržením pravého tlačítka / mezerníkem přepnete směr',
+      'Mobil: Přejetím prstem určíte směr, normálním klepnutím postavíte zeď',
       'Uzavřete ≥75% celkové plochy',
       'Míč zasahující rostoucí zeď stojí 1 život',
       'Pauza: Stiskněte P nebo tlačítko Pauza vlevo nahoře',
@@ -556,8 +556,9 @@ function t(key, vars) {
 
 function updateDirBtn() {
   const dirName = wallHorizontal ? t('horizontal') : t('vertical');
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   document.getElementById('btn-dir').textContent =
-    (wallHorizontal ? '↔ ' : '↕ ') + dirName + ' [Leertaste]';
+    (wallHorizontal ? '↔ ' : '↕ ') + dirName + (isTouch ? '' : ' [Leertaste]');
 }
 function updateMusicBtn() {
   document.getElementById('btn-music').textContent = musicOn ? t('musicOn') : t('musicOff');
