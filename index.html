@@ -2191,7 +2191,107 @@ function handleCanvasPointer(clientX, clientY) {
   AudioSys.sfxWallStart();
 }
 
+let touchStartX = 0;
+let touchStartY = 0;
+let isTouching = false;
+let touchCol = -1;
+let touchRow = -1;
+let isTouchMode = false;
+
+gameCanvas.addEventListener('touchstart', e => {
+  isTouchMode = true;
+  if (e.touches.length > 0) {
+    const t = e.touches[0];
+    const rect = gameCanvas.getBoundingClientRect();
+    const scaleX = canvasW / rect.width;
+    const scaleY = canvasH / rect.height;
+    touchStartX = (t.clientX - rect.left) * scaleX;
+    touchStartY = (t.clientY - rect.top) * scaleY;
+    touchCol = Math.floor(touchStartX / cellW);
+    touchRow = Math.floor(touchStartY / cellH);
+    isTouching = true;
+  }
+}, { passive: true });
+
+gameCanvas.addEventListener('touchmove', e => {
+  if (!isTouching || e.touches.length === 0) return;
+  const t = e.touches[0];
+  const rect = gameCanvas.getBoundingClientRect();
+  const scaleX = canvasW / rect.width;
+  const scaleY = canvasH / rect.height;
+  const x = (t.clientX - rect.left) * scaleX;
+  const y = (t.clientY - rect.top) * scaleY;
+  
+  const dx = x - touchStartX;
+  const dy = y - touchStartY;
+  
+  if (Math.abs(dx) > 25 || Math.abs(dy) > 25) {
+    isTouching = false;
+    wallHorizontal = Math.abs(dx) > Math.abs(dy);
+    updateDirBtn();
+    
+    if (touchCol >= 0 && touchCol < GRID_COLS && touchRow >= 0 && touchRow < GRID_ROWS) {
+      if (grid[touchRow][touchCol] === CELL_FREE && isPlaying && !isPaused && !activeWall) {
+        activeWall = new ActiveWall(touchCol, touchRow, wallHorizontal);
+        AudioSys.sfxWallStart();
+      }
+    }
+  }
+}, { passive: true });
+
+gameCanvas.addEventListener('touchend', e => {
+  if (isTouching) {
+    isTouching = false;
+    // Tap without swipe
+    if (touchCol >= 0 && touchCol < GRID_COLS && touchRow >= 0 && touchRow < GRID_ROWS) {
+      if (grid[touchRow][touchCol] === CELL_FREE && isPlaying && !isPaused && !activeWall) {
+        activeWall = new ActiveWall(touchCol, touchRow, wallHorizontal);
+        AudioSys.sfxWallStart();
+      }
+    }
+  }
+});
+
+gameCanvas.addEventListener('touchcancel', () => {
+  isTouching = false;
+});
+
+let rightClickDownTime = 0;
+let rightClickUsedAsModifier = false;
+
+gameCanvas.addEventListener('mousedown', e => {
+  if (isTouchMode) return;
+  if (e.button === 2) {
+    rightClickDownTime = Date.now();
+    rightClickUsedAsModifier = false;
+    wallHorizontal = !wallHorizontal;
+    updateDirBtn();
+    return;
+  }
+  if (e.button === 0) {
+    if ((e.buttons & 2) !== 0) {
+      rightClickUsedAsModifier = true;
+    }
+    handleCanvasPointer(e.clientX, e.clientY);
+  }
+});
+
+gameCanvas.addEventListener('mouseup', e => {
+  if (isTouchMode) return;
+  if (e.button === 2) {
+    if (rightClickUsedAsModifier || (Date.now() - rightClickDownTime > 250)) {
+      wallHorizontal = !wallHorizontal;
+      updateDirBtn();
+    }
+  }
+});
+
+gameCanvas.addEventListener('contextmenu', e => {
+  e.preventDefault();
+});
+
 gameCanvas.addEventListener('pointermove', e => {
+  if (isTouchMode && e.pointerType === 'touch') return;
   const rect = gameCanvas.getBoundingClientRect();
   const scaleX = canvasW / rect.width;
   const scaleY = canvasH / rect.height;
@@ -2211,26 +2311,11 @@ gameCanvas.addEventListener('pointerleave', () => {
   mouseIsInsideCanvas = false;
 });
 
-gameCanvas.addEventListener('pointerdown', e => {
-  if (e.button === 2) {
-    wallHorizontal = !wallHorizontal;
-    updateDirBtn();
-    return;
-  }
-  handleCanvasPointer(e.clientX, e.clientY);
-});
-
 gameCanvas.addEventListener('wheel', e => {
   e.preventDefault();
   wallHorizontal = !wallHorizontal;
   updateDirBtn();
 }, { passive: false });
-
-gameCanvas.addEventListener('contextmenu', e => {
-  e.preventDefault();
-  wallHorizontal = !wallHorizontal;
-  updateDirBtn();
-});
 
 window.addEventListener('keydown', e => {
   if (e.code === 'KeyP' || e.code === 'Escape') {
