@@ -136,8 +136,13 @@
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       opacity: 1; transition: opacity 0.4s ease;
+      overflow-y: auto;
     }
     .overlay.hidden { opacity: 0; pointer-events: none; }
+
+    @media (max-height: 650px) {
+      .overlay { justify-content: flex-start; padding-top: 40px; padding-bottom: 40px; }
+    }
 
     /* Start menu (crisp, animated sunshine shows through cleanly) */
     #screen-start {
@@ -1785,7 +1790,7 @@ function spawnBallsForLevel(level) {
   balls = [];
   const numBalls = level + 1;
   const speed = 130 + level * 14;
-  const radius = Math.max(6, Math.floor(cellW * 0.38));
+  const radius = Math.max(2, cellW * 0.38);
 
   for (let i = 0; i < numBalls; i++) {
     let rx = (Math.random() * (GRID_COLS - 4) + 2) * cellW;
@@ -2028,13 +2033,9 @@ function drawGrid() {
       gameCtx.shadowBlur = 12;
       gameCtx.drawImage(tc, dx, dy, targetW, targetH);
     } else {
-      gameCtx.globalAlpha = 0.16;
-      if (currentLevel <= 4) {
-        gameCtx.globalCompositeOperation = 'multiply';
-      } else {
-        gameCtx.filter = 'invert(1) contrast(180%)';
-        gameCtx.globalCompositeOperation = 'screen';
-      }
+      gameCtx.globalAlpha = 0.18;
+      gameCtx.filter = 'invert(1) contrast(150%) grayscale(100%)';
+      gameCtx.globalCompositeOperation = 'screen';
       gameCtx.drawImage(avatarSilhouetteCanvas, dx, dy, targetW, targetH);
     }
     gameCtx.restore();
