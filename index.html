@@ -1496,13 +1496,12 @@
         ctx.save();
         for (let f of this.hellEmbers) {
           const alpha = 1.0 - f.life / f.maxLife;
-          ctx.fillStyle = f.color;
-          ctx.shadowColor = f.color;
-          ctx.shadowBlur = 10;
-          ctx.globalAlpha = Math.max(0, alpha);
+          ctx.strokeStyle = f.color;
+          ctx.lineWidth = 1.5;
+          ctx.globalAlpha = Math.max(0, alpha) * 0.75;
           ctx.beginPath();
-          ctx.arc(f.x, f.y, f.size, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.arc(f.x, f.y, f.size * 1.5, 0, Math.PI * 2);
+          ctx.stroke();
         }
         ctx.restore();
       },
@@ -1753,7 +1752,7 @@
         } else if (currentLevel <= 8) {
           c2 = '#34d399'; c3 = '#059669'; // Green balls for better contrast in Lava levels
         } else {
-          c2 = '#f87171'; c3 = '#b91c1c';
+          c2 = '#f1f5f9'; c3 = '#64748b'; // White/Silver balls for better contrast in Hell levels
         }
 
         g.addColorStop(0, c1);
