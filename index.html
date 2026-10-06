@@ -2116,7 +2116,12 @@
     function spawnBallsForLevel(level) {
       balls = [];
       const numBalls = level + 1;
-      const speed = 130 + level * 14;
+      // ALT:
+// const speed = 130 + level * 14;
+
+// NEU: Geschwindigkeit skaliert mit der Bildschirmbreite
+      const baseSpeed = 130 + level * 14;
+      const speed = (baseSpeed / 900) * canvasW;
       const radius = Math.max(2, cellW * 0.38);
 
       for (let i = 0; i < numBalls; i++) {
