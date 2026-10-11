@@ -9,4 +9,4 @@
    const FINAL_COORDINATES = "N 48° 12.345<br>E 016° 23.456";
    ===================================================================== */
 
-const FINAL_COORDINATES = "N 48° 00.000<br>E 016° 00.000";
+const FINAL_COORDINATES = "N 50° 13.273<br>E 011° 44.393";
